@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block body %}
+    <form action="{{ url_for('add_station') }}" method=post class=add-station>
+      <dl>
+        <dt>Webradio Name and URL
+        <dd><input type=text name=title size=15>
+        <input type=text size=25 name=url>
+        <input type=submit value="Add new station">
+        <dd>
+        
+      </dl>
+    </form>
+    
+    <ul class=stations>
+    {% for s in stations %}
+        <li>{{ s.title }} {{ s.url|safe }} 
+  
+    {% endfor %}
+    </ul>
+    
+    
+{% endblock %}

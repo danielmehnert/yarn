@@ -54,12 +54,6 @@ def timer(starttime, endtime, url, outputdir):
     else:
         print "Record time is in the past. Nothing to do."
 
-def future_rec(streamurl, outputdir, starttime, endtime):
-    now_string = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
-    sometime = datetime.datetime.strptime("2016-10-13 11:55", "%Y-%m-%d %H:%M")
-    print sometime-datetime.datetime.now()
-    #print datetime.datetime.isoformat(datetime.datetime.now())
-
 def parse_mpegurl(mpegurl_content):
     res = []
     for line in mpegurl_content:
@@ -68,14 +62,7 @@ def parse_mpegurl(mpegurl_content):
             res.append(line)
     return res
 
-"""    
-#test maybe necessary for multiple stream url entries. 
-#If one is not working, try until success, else report failure
-def test_streamurl(url):
-    r = requests.get(url, stream = True)
-    print r.headers
-"""        
-    
+   
 
 def verify_streamurl(streamurl):
     r = requests.get(streamurl, stream = True)
@@ -94,18 +81,20 @@ def rec_worker(stop, streamurl, outputdir):
     streamurl = verify_streamurl(streamurl)
     r = requests.get(streamurl, stream = True)
         
-    channelname = r.headers["icy-name"]
+    channelname = r.headers["icy-name"].decode("ISO-8859-1")
+    #print channelname.decode("ISO-8859-1")
     ctype = r.headers["Content-Type"]
     fsuffix = ".mp3"
     if "ogg" in ctype:
         fsuffix = ".ogg"
             
     cur_dt_string = datetime.datetime.now().strftime('%Y-%m-%dT%H_%M_%S')
-    filename = os.path.join(outputdir, channelname +"_"+ cur_dt_string + fsuffix)
+    filename = unicode(os.path.join(outputdir, channelname +"_"+ cur_dt_string + fsuffix))
     
     with open(filename, "wb") as target:
         while(not stop.is_set()):
             target.write(r.raw.read(1024))
+    return filename
     
 
     
@@ -127,14 +116,11 @@ if __name__ == "__main__":
     wdr3 = "http://www.wdr.de/wdrlive/media/mp3/wdr3_hq.m3u"
     urls = [brklassik, dkultur, dlf, dwissen, erfplus, mdrklassik, swr2, wdr3]
     
-    #for url in urls: 
-    #    rec(url, outputdir, duration)
-    #future_rec(urls[0], outputdir, "", "")
     
-    strtime = datetime.datetime.strptime("2016-10-13 13:00", "%Y-%m-%d %H:%M")
-    endtime = datetime.datetime.strptime("2016-10-13 13:10", "%Y-%m-%d %H:%M")
+    strtime = datetime.datetime.strptime("2016-10-18T11:30", "%Y-%m-%dT%H:%M")
+    endtime = datetime.datetime.strptime("2016-10-18T11:35", "%Y-%m-%dT%H:%M")
     
-    #timer(strtime, endtime, dlf, outputdir)
+    timer(strtime, endtime, dlf, outputdir)
     
     
     

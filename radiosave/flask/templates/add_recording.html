@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <form action="{{ url_for('add_recording') }}" method=post class=add-recording>
+      <dl>
+        <dt>Date, start and end-time:
+        <dd><input type=datetime-local size=50 name=datestart>
+        <input type=time name=endtime size=30>
+        <select name = urlselect>
+            {% for station in stations %}
+                <option value={{station.url}} >{{station.title}}</option>
+            {% endfor %}
+        </select>
+        <input type=submit value="Schedule recording">
+        <dd>
+        
+        
+      </dl>
+    </form>
+    Upcoming recordings: 
+    <ul class=recordings>
+    {% for rec in recordings %}
+        <li>{{ rec.url }} {{ rec.start|safe }} {{ rec.end|safe }}
+  
+    {% endfor %}
+    </ul>
+    Finished recordings: 
+    <ul class=recordings>
+    {% for d in done %}
+        <li>{{ d|safe }}
+  
+    {% endfor %}
+    </ul>
+  
+{% endblock %}
